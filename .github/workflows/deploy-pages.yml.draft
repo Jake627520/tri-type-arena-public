@@ -1,0 +1,68 @@
+name: Deploy to GitHub Pages (Draft)
+
+on:
+  workflow_dispatch:
+  # To enable automatic deployment on release tags, uncomment below:
+  # push:
+  #   tags:
+  #     - 'v*.*.*'
+
+# Sets permissions of the GITHUB_TOKEN to allow deployment to GitHub Pages
+permissions:
+  contents: read
+  pages: write
+  id-token: write
+
+# Allow only one concurrent deployment, skipping runs queued between the run in-progress and latest queued.
+concurrency:
+  group: 'pages'
+  cancel-in-progress: false
+
+jobs:
+  build-and-deploy:
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: 'npm'
+
+      - name: Install Gitleaks
+        run: |
+          curl -sSL "https://github.com/gitleaks/gitleaks/releases/download/v8.21.2/gitleaks_8.21.2_linux_x64.tar.gz" | sudo tar -xz -C /usr/local/bin gitleaks
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Run Quality Gate Checks
+        run: |
+          npm run typecheck
+          npm run lint
+          npm test
+          npm run test:vitest
+          npm run audit:licenses
+          npm run audit:security
+
+      - name: Build production bundle
+        run: npm run build:release
+
+      - name: Setup Pages
+        uses: actions/configure-pages@v5
+
+      - name: Upload artifact
+        uses: actions/upload-pages-artifact@v3
+        with:
+          path: './dist'
+
+      - name: Deploy to GitHub Pages
+        id: deployment
+        uses: actions/deploy-pages@v4

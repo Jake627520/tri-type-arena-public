@@ -1,0 +1,12 @@
+# Tasks / Acceptance
+- [x] Original English/Pinyin/Zhuyin lesson packs
+- [x] Daqian phonetic key map
+- [x] 30/60/120 second gameplay UI
+- [x] Live WPM/accuracy/combo/progress
+- [x] Best score in localStorage
+- [x] RED/GREEN test cases for normalization, comparison, score, rotation
+- [x] Node unit tests executable offline
+- [ ] React TypeScript strict migration
+- [ ] Vitest component tests and full CI integration
+- [ ] Playwright multi-browser E2E and accessibility test matrix
+- [ ] Native Chinese IME composition performance assessment

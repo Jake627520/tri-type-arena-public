@@ -1,0 +1,23 @@
+name: License & Security Audit
+on: [push, pull_request]
+
+jobs:
+  audit:
+    name: License & Secret Check
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+
+      - name: Run License Audit
+        run: node --test tests/license-audit.test.mjs
+
+      - name: Secret Scanning (TruffleHog / GitGuardian CLI or local check)
+        run: |
+          # Basic scan for accidental secret leakage
+          ! grep -rnE "(ghp_[a-zA-Z0-9]{36}|xox[baprs]-[0-9a-zA-Z]{10,48}|AKIA[0-9A-Z]{16}|AIza[0-9A-Za-z\\-_]{35}|-----BEGIN (RSA|EC|OPENSSH) PRIVATE KEY-----)" . --exclude-dir=.git
