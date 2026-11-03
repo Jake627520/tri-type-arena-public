@@ -1,6 +1,7 @@
 import React from 'react';
 import { SessionState } from '../../domain/types';
 import type { Locale, UIKey } from '../../i18n/core';
+import { useModalFocus } from '../../shared/useModalFocus';
 
 interface ResultModalProps {
   state: SessionState;
@@ -14,6 +15,7 @@ export const ResultModal: React.FC<ResultModalProps> = ({
   onRestart,
   t = (k: UIKey) => k,
 }) => {
+  const dialogRef = useModalFocus(state.status === 'finished');
   if (state.status !== 'finished') return null;
 
   // Aggregate typos by key to highlight weak keys
@@ -27,7 +29,7 @@ export const ResultModal: React.FC<ResultModalProps> = ({
   const typoList = Object.entries(typoMap).sort((a, b) => b[1] - a[1]);
 
   return (
-    <div className="modal-overlay" role="dialog" aria-modal="true" aria-labelledby="result-title">
+    <div className="modal-overlay" role="dialog" aria-modal="true" aria-labelledby="result-title" ref={dialogRef} tabIndex={-1}>
       <div className="modal-content">
         <div className="modal-header">
           <span className="celebrate-badge">{t('resultTag')}</span>
@@ -54,7 +56,7 @@ export const ResultModal: React.FC<ResultModalProps> = ({
             </div>
             <div>
               <span>{t('scoreStreak')}</span>
-              <b>{state.streak}</b>
+              <b>{state.maxStreak}</b>
             </div>
           </div>
         </div>
@@ -76,7 +78,7 @@ export const ResultModal: React.FC<ResultModalProps> = ({
         </div>
 
         <div className="modal-actions">
-          <button type="button" className="btn-primary" onClick={onRestart} autoFocus>
+          <button type="button" className="btn-primary" onClick={onRestart}>
             {t('btnPlayAgain')}
           </button>
         </div>

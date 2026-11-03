@@ -55,6 +55,12 @@ export const App: React.FC = () => {
   const [history, setHistory] = useState<LearningSessionRecord[]>([]);
   const [weakKeys, setWeakKeys] = useState<KeyStat[]>([]);
 
+  // A finished session takes precedence over the dashboard. Dismiss the
+  // dashboard instead of leaving two modal focus traps active at once.
+  useEffect(() => {
+    if (state.status === 'finished') setIsDashboardOpen(false);
+  }, [state.status]);
+
   // Refresh history and weak key stats when dashboard opens
   useEffect(() => {
     if (isDashboardOpen) {
@@ -241,7 +247,7 @@ export const App: React.FC = () => {
       <Onboarding locale={locale} />
 
       <LearningDashboard
-        isOpen={isDashboardOpen}
+        isOpen={isDashboardOpen && state.status !== 'finished'}
         onClose={() => setIsDashboardOpen(false)}
         history={history}
         weakKeys={weakKeys}

@@ -37,6 +37,7 @@ export interface SessionState {
   correctKeys: number;
   words: number;
   streak: number;
+  maxStreak: number;
   errors: number;
   typos: TypoRecord[];
   wpm: number;

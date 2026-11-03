@@ -120,6 +120,7 @@ export class GameSession {
       correctKeys: 0,
       words: 0,
       streak: 0,
+      maxStreak: 0,
       errors: 0,
       typos: [],
       wpm: 0,
@@ -190,6 +191,7 @@ export class GameSession {
     this.state.correctKeys = 0;
     this.state.words = 0;
     this.state.streak = 0;
+    this.state.maxStreak = 0;
     this.state.errors = 0;
     this.state.typos = [];
     this.state.keyAttempts = {};
@@ -232,6 +234,7 @@ export class GameSession {
     this.state.correctKeys = 0;
     this.state.words = 0;
     this.state.streak = 0;
+    this.state.maxStreak = 0;
     this.state.errors = 0;
     this.state.typos = [];
     this.state.keyAttempts = {};
@@ -285,6 +288,7 @@ export class GameSession {
       if (this.state.typedValue === expectedAnswer) {
         this.state.words++;
         this.state.streak++;
+        this.state.maxStreak = Math.max(this.state.maxStreak, this.state.streak);
         this.state.currentIndex = (this.state.currentIndex + 1) % this.lessons.length;
         if (this.shuffle) {
           this.state.currentLesson = this.shuffleBag.next();

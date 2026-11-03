@@ -1,9 +1,10 @@
-import React, { useEffect, useRef } from 'react';
+import React, { useEffect } from 'react';
 import { Mode } from '../../domain/types';
 import type { UIKey } from '../../i18n/core';
 import { LearningSessionRecord } from '../../shared/storage';
 import { KeyStat } from '../../domain/learning/weak-keys';
 import { TrendChart } from './TrendChart';
+import { useModalFocus } from '../../shared/useModalFocus';
 
 interface LearningDashboardProps {
   isOpen: boolean;
@@ -26,9 +27,9 @@ export const LearningDashboard: React.FC<LearningDashboardProps> = ({
   onClearHistory,
   t = (k: UIKey) => k,
 }) => {
-  const dialogRef = useRef<HTMLDivElement>(null);
+  const dialogRef = useModalFocus(isOpen);
 
-  // Close on Escape key & trap focus
+  // Close on Escape key.
   useEffect(() => {
     if (!isOpen) return;
 
@@ -40,8 +41,6 @@ export const LearningDashboard: React.FC<LearningDashboardProps> = ({
     };
 
     window.addEventListener('keydown', handleKeyDown);
-    dialogRef.current?.focus();
-
     return () => {
       window.removeEventListener('keydown', handleKeyDown);
     };
