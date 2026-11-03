@@ -106,12 +106,23 @@ test.describe('TriType Arena — End-to-End E2E Suite', () => {
   });
 
   test('E2E-006: Responsive mobile viewport check', async ({ page }) => {
-    await page.setViewportSize({ width: 375, height: 667 });
+    await page.setViewportSize({ width: 320, height: 667 });
+    await skipOnboarding(page);
     await page.goto('/');
 
     await expect(page.locator('.hero-heading')).toBeVisible();
     await expect(page.locator('.mode-selector')).toBeVisible();
     await expect(page.locator('.typing-arena')).toBeVisible();
+    for (const width of [320, 375, 390]) {
+      await page.setViewportSize({ width, height: 844 });
+      for (const locale of ['zh-TW', 'zh-CN', 'en']) {
+        await page.locator('#ui-locale').selectOption(locale);
+        await expect.poll(() => page.evaluate(() =>
+          document.documentElement.scrollWidth - document.documentElement.clientWidth
+        ), { message: `horizontal overflow at ${width}px in ${locale}` }).toBe(0);
+        await expect(page.locator('.btn-open-dashboard')).toBeVisible();
+      }
+    }
   });
 
   // ── V0.3 i18n & Onboarding E2E ────────────────────────────────────────────

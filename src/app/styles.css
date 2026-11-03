@@ -91,6 +91,22 @@ body {
   gap: 0.5rem;
 }
 
+@media (max-width: 600px) {
+  .top-nav {
+    flex-wrap: wrap;
+    gap: 0.75rem;
+  }
+
+  .brand-group {
+    flex: 1 1 100%;
+  }
+
+  .status-badges {
+    flex-wrap: wrap;
+    align-items: center;
+  }
+}
+
 .badge-local {
   font-size: 0.75rem;
   font-weight: 600;
