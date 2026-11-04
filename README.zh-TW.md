@@ -6,7 +6,7 @@
 
 [![License: MIT](https://img.shields.io/badge/License-MIT-blue.svg)](LICENSE)
 [測試](tests)
-部署狀態尚未核實。
+正式網站：[tri-type-arena.vercel.app](https://tri-type-arena.vercel.app/)。
 
 ---
 
@@ -14,7 +14,7 @@
 
 **TriType Arena（中英打字競技場）** 是專為中文與多語言輸入法設計的現代瀏覽器原生打字練習工具。支援英文盲打、簡體中文漢語拼音及臺灣標準繁體中文注音（大千鍵盤佈局）。系統採用純前端本地優先（Local-first）架構，無後端依賴、免註冊登入、零個人隱私追蹤，提供極致流暢與超低延遲的鍵盤指法鍛鍊體驗。
 
-- 先前部署網址為 [tri-type-arena.vercel.app](https://tri-type-arena.vercel.app)，目前狀態尚未核實。
+- 正式網站為 [https://tri-type-arena.vercel.app/](https://tri-type-arena.vercel.app/)，由 Vercel 從本儲存庫部署。
 - **目標族群**：雙語開發者、打字愛好者、希望建立大千注音或英文標準指法盲打肌肉記憶的學習者。
 
 ---
@@ -90,14 +90,14 @@ TriType Arena 內建完整的本機離線學習分析模組：
 ## 7. 快速開始 (Getting Started)
 
 ### 環境需求
-- Node.js >= 20.0.0
+- Node.js 22.x
 - npm >= 10.0.0
 
 ### 本地安裝與啟動
 ```bash
 # 複製儲存庫
-git clone https://github.com/Jake627520/tri-type-arena.git
-cd tri-type-arena
+git clone https://github.com/Jake627520/tri-type-arena-public.git
+cd tri-type-arena-public
 
 # 安裝乾淨相依套件
 npm ci
@@ -218,7 +218,7 @@ TriType Arena 貫徹嚴格的**純前端本地優先隱私政策**：
 
 ## 12. 部署狀態與已知限制 (Deployment & Known Limitations)
 
-- **部署**：專案含 Vercel 設定；目前部署及其建置設定尚未核實。
+- **部署**：正式網站為 [https://tri-type-arena.vercel.app/](https://tri-type-arena.vercel.app/)，由 Vercel 從本儲存庫部署。
 - **已知限制**：
   - **單機本機儲存 · 無雲端同步**：練習紀錄皆存於當前瀏覽器之 `localStorage`，無法跨裝置或跨不同瀏覽器自動同步進度。
   - **鍵位練習 vs. 作業系統 IME 選字**：注音模式專注於訓練實體按鍵對應大千注音符號之盲打肌肉記憶，模擬直接輸入拼音/注音字元，刻意不模擬作業系統層級之中文選字清單。

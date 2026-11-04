@@ -6,7 +6,7 @@ Version: **0.4.1** — Local-first multilingual typing trainer built with React 
 
 [![License: MIT](https://img.shields.io/badge/License-MIT-blue.svg)](LICENSE)
 [Tests](tests)
-Deployment status: unverified.
+Production: [tri-type-arena.vercel.app](https://tri-type-arena.vercel.app/).
 
 ---
 
@@ -14,7 +14,7 @@ Deployment status: unverified.
 
 **TriType Arena** is a browser-native typing trainer designed specifically for multilingual typing instruction across English, Simplified Chinese Pinyin, and Traditional Chinese Zhuyin (Taiwan standard Daqian layout). Built on a pure local-first architecture, it runs entirely in the browser with zero backend requirements, zero account registration, and zero telemetry tracking, offering an ultra-low latency, privacy-preserving typing workout.
 
-- A previous deployment URL is [tri-type-arena.vercel.app](https://tri-type-arena.vercel.app); its current status is unverified.
+- The production site is [https://tri-type-arena.vercel.app/](https://tri-type-arena.vercel.app/), deployed by Vercel from this repository.
 - **Target Audience**: Typists, bilingual developers, and learners seeking to build keyboard muscle memory across Latin and Chinese phonetic input systems.
 
 ---
@@ -90,14 +90,14 @@ TriType Arena includes an offline learning analytics engine:
 ## 7. Getting Started
 
 ### Prerequisites
-- Node.js >= 20.0.0
+- Node.js 22.x
 - npm >= 10.0.0
 
 ### Installation & Local Run
 ```bash
 # Clone the repository
-git clone https://github.com/Jake627520/tri-type-arena.git
-cd tri-type-arena
+git clone https://github.com/Jake627520/tri-type-arena-public.git
+cd tri-type-arena-public
 
 # Install clean dependencies
 npm ci
@@ -218,7 +218,7 @@ TriType Arena strictly delineates three distinct legal and governance tiers:
 
 ## 12. Deployment & Known Limitations
 
-- **Deployment**: Vercel configuration is present; the current deployment and its build settings have not been verified.
+- **Deployment**: The production site is [https://tri-type-arena.vercel.app/](https://tri-type-arena.vercel.app/), deployed by Vercel from this repository.
 - **Known Limitations**:
   - **Single Device / No Cloud Sync**: Because all progress is stored locally in `localStorage`, practice history does not sync across different browsers or devices.
   - **IME Candidate Selection vs. Key Mapping**: Traditional Zhuyin practice is designed to build physical keyboard muscle memory according to the Daqian layout. It simulates direct phonetic typing and intentionally does not emulate OS-level Chinese character candidate selection lists (選字清單).
