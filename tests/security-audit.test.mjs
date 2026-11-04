@@ -54,8 +54,13 @@ test('security: git log failure triggers fatal finding (fail-closed)', async () 
 
 test('security: npm audit unparseable or non-zero exit triggers fatal finding', async () => {
   const { checkNpmAudit } = await import('../scripts/security-audit.mjs');
-  const mockRunner = () => 'Invalid JSON output from audit';
+  let command = '';
+  const mockRunner = (cmd) => {
+    command = cmd;
+    return 'Invalid JSON output from audit';
+  };
   const findings = checkNpmAudit({ execSync: mockRunner });
+  assert.equal(command, 'npm audit --omit=dev --json');
   assert.ok(findings.length > 0, 'Must record finding when audit output is unparseable');
 });
 
