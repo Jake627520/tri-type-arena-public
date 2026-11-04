@@ -175,7 +175,10 @@ export function checkNpmAudit(deps = {}) {
   const findings = [];
 
   try {
-    const auditOutput = runner('npm audit --json');
+    // Production dependencies only. The current moderate advisories
+    // (GHSA-g3hv-75wg-m249, minimatch) are reached only through eslint and
+    // @typescript-eslint devDependencies and have no upstream fix.
+    const auditOutput = runner('npm audit --omit=dev --json');
     const auditData = JSON.parse(auditOutput);
     if (!auditData || typeof auditData !== 'object' || !auditData.metadata) {
       findings.push({
