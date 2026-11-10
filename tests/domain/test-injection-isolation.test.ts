@@ -1,7 +1,6 @@
 import { describe, it, expect, beforeEach, afterEach } from 'vitest';
 import fs from 'node:fs';
 import path from 'node:path';
-import { execSync } from 'node:child_process';
 import {
   createGameSession,
   getTestInjectedLessons,
@@ -90,13 +89,7 @@ describe('TEST-INJECTION-ISOLATION: Test Lesson Injection Environment & Mode Gua
   it('4. Production build artifact isolation verification', () => {
     const rootDir = path.resolve(__dirname, '../..');
     const distDir = path.resolve(rootDir, 'dist/assets');
-    if (!fs.existsSync(distDir)) {
-      execSync('npx vite build --mode production', {
-        cwd: rootDir,
-        env: { ...process.env, NODE_ENV: 'production' },
-        stdio: 'pipe',
-      });
-    }
+    // Produced by tests/global-setup.ts when dist/assets is missing.
     expect(fs.existsSync(distDir)).toBe(true);
 
     const files = fs.readdirSync(distDir);
