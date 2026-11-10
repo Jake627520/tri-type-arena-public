@@ -21,14 +21,14 @@
 
 ## 2. 系统功能特色 (Features)
 
-- **三语完整本地化界面 (UI i18n)**：完整支持繁体中文 (`zh-TW`)、简体中文 (`zh-CN`) 与英语 (`en`)，自动检测浏览器首选语系，可随时在导航栏切换。
-- **无障碍新手导览 (Onboarding Guide)**：三步骤弹窗引导模式、时限与按键操作，具备键盘 Focus Trap、Escape 关闭、焦点还原与随时重新开启。
-- **时限挑战模式**：提供 30 秒冲刺、60 秒标准与 120 秒耐力练习。
-- **实时数值运算**：实时计算打字速度 (WPM)、净准确率百分比、完成词数与连续连击数 (Combo Streak)。
-- **极短时间突波平滑抑制 (Initial Dampening)**：平滑前 2 秒的除算公式，消除因极短时间运算所造成的异常速度峰值。
-- **防作弊粘贴拦截 (Anti-Cheat Paste Rejection)**：严格拦截剪贴板直接粘贴，确保每一下敲击均来自真实键盘输入。
-- **键盘全流程支持 (Accessibility)**：支持 `Enter` 快速开局、`Esc` 暂停、`Space` 继续挑战，全流程无需依赖鼠标。
-- **学习进度面板 (Learning Dashboard)**：使用原生纯 SVG 绘制进度趋势图表（无外部图表依赖包），统计弱键分析与专项练习。
+- **三语完整本地化界面 (UI i18n)**：完整支持繁体中文 (`zh-TW`)、简体中文 (`zh-CN`) 与英语 (`en`)。导航栏选择器会立即切换。若 `tritype.ui.locale` 已保存 `en`、`zh-TW` 或 `zh-CN`，以该值为准；否则读取 `navigator.language`（`zh-CN`、`zh-SG` 与 `zh-Hans*` → 简体中文，其他 `zh*` → 繁体中文，其余 → 英语）。
+- **无障碍新手导览**：三步骤对话框：选择模式、设置时限与提示、开始输入并查看准确率与速度。对话框会困住 Tab 焦点、按 Escape 关闭、还原焦点，并可重新打开。
+- **时限挑战模式**：30 秒冲刺、60 秒标准、120 秒耐力。
+- **实时数值**：WPM、准确率（`correctKeys / totalKeys`）、完成词数，以及进行中的当前连击（界面上标为 COMBO）。结算窗口另显示最高连击。
+- **前 2 秒 WPM 平滑**：当 `elapsedSeconds < 2` 时，显示的 WPM 从 2 秒基准向上爬升，避免除以接近 0 的经过时间。
+- **防粘贴**：任何剪贴板粘贴都会被拒绝（`PASTE_PROHIBITED`），包括单个字符。进度只来自逐键输入。
+- **键盘操作**：空闲时按 `Enter` 开始。进行中按 `Esc` 暂停。暂停时按 `Space` 或 `Enter` 继续。进行中的 `Space` 是输入字符（注音第一声必须使用），不是继续快捷键。
+- **学习进度面板**：用纯 SVG 绘制最近 20 条记录的趋势图（无图表依赖包），并提供弱键统计与复习入口。
 
 ---
 
@@ -37,17 +37,17 @@
 练习模式与界面语言相互独立，可自由搭配：
 
 1. **英语标准练习 (`en`)**
-   - 涵盖高频日常生活单词、短语及现代编程专用术语。
-   - 逐字实时比对，支持精确 Backspace 退格修正。
+   - 500 个来自 Moby Words II 词频表的单词。分级按词长（2–4、5–6、7 个字母以上），不是短语，也不是编程词汇。
+   - 逐字比对，Backspace 删除最后一个已输入字符。
 
 2. **简体汉语拼音 (`pinyin`)**
-   - 汉语拼音字母流畅输入（如 `nihao` → `你好`）。
-   - 自动语音规范化，专注 Latin 键位至拼音音节的反应速度。
+   - 答案是不含声调符号的汉语拼音，例如“早餐”输入 `zaocan`（提示仍可显示 `zǎo cān`）。
+   - 每个按键会规范化：去掉声调符号，并把 `ü` 对应为 `v`。
 
 3. **繁体注音 · 台湾标准大千键盘 (`zhuyin`)**
-   - 实体键盘英文字键直接映射注音符号（如 `5 j / Space` 对应 `ㄓㄨㄥ`）。
+   - 大千实体键位：`5`、`j`、`/` 与 Space 分别对应 `ㄓ`、`ㄨ`、`ㄥ` 与第一声空格。
    - 具备实时虚拟大千键盘，动态高亮当前预期敲击的实体按键。
-   - 专注建立实体键位至注音符号的盲打肌肉记忆。
+   - 专注建立实体键位至注音符号的盲打肌肉记忆，不打开操作系统选字列表。
 
 ---
 
@@ -55,13 +55,15 @@
 
 TriType Arena 内置 1,100 笔精选题库，划分为三种难度等级：
 
-| 难度等级 | 英语题库 (500 词) | 拼音题库 (300 词) | 注音题库 (300 词) | 等级说明 |
-|---|---|---|---|---|
-| **初级 (Beginner)** | 200 词 | 120 词 | 120 词 | 高频日常词汇与基础音节 |
-| **中级 (Intermediate)**| 200 词 | 120 词 | 120 词 | 进阶合成词与组合键位 |
-| **高级 (Advanced)** | 100 词 | 60 词 | 60 词 | 专业技术词汇、成语及长音节词组 |
+| 难度等级 | 英语题库 (500 词) | 拼音题库 (300 词) | 注音题库 (300 词) |
+|---|---|---|---|
+| **初级 (Beginner)** | 200 词，2–4 个字母 | 120 条日常生活词 | 120 条，由拼音词表转写 |
+| **中级 (Intermediate)** | 200 词，5–6 个字母 | 120 条日常生活词 | 120 条，由拼音词表转写 |
+| **高级 (Advanced)** | 100 词，7 个字母以上 | 60 条日常生活词 | 60 条，由拼音词表转写 |
 
-- **随机抽取算法**：采用具随机数种子 (Seeded) 的 `ShuffleBag` 算法与 Fisher-Yates 洗牌机制，保证循环边界不重复（第 $N$ 轮末题绝不等于第 $N+1$ 轮首题）。
+- 英语分级是 Moby Words II 的打字词长，不是语言能力等级。题库只有普通单词。
+- 拼音与注音共用同一份日常生活词表。120 / 120 / 60 是名额分配，不是另一套已评定的难度量表。注音由拼音读音机械转写。
+- **随机抽取**：`ShuffleBag` 使用 Fisher-Yates。当题池超过 1 条时，第 $N$ 轮末题不会成为第 $N+1$ 轮首题。可注入种子以得到固定顺序。普通挑战界面不会设置种子，因此使用 `Math.random`。
 
 ---
 
@@ -70,7 +72,7 @@ TriType Arena 内置 1,100 笔精选题库，划分为三种难度等级：
 在标准台湾大千式注音键盘中，**第一声（阴平）**并无实体调号键。TriType Arena 严格遵循真实打字规则：
 
 - **第一声必须按空格键**：输入第一声音节时，用户**必须按下实体 Space 键 (`' '`)** 以完成该音节（例如“中午”之“中”：`5` (ㄓ) + `j` (ㄨ) + `/` (ㄥ) + `Space`）。
-- **非第一声调号**：二声 `6` (ˊ)、三声 `3` (ˇ)、四声 `4` (ˋ)、轻声 `7` (˙) 使用对应键输入，输入非第一声调号后严禁多按空格键。
+- **非第一声调号**：二声 `6` (ˊ)、三声 `3` (ˇ)、四声 `4` (ˋ)、轻声 `7` (˙)。这些音节的答案不含 Space。多按的 Space 会被当成已输入字符并计为错误。
 - **计分与按键纳入**：第一声的 Space 键敲击视为合法有效按键，完全计入 `totalKeys`、`correctKeys`、WPM 计算及弱键统计分析。
 - **视觉引导**：当预期按键为第一声空格键时，虚拟大千键盘空格键 (`#daqian-space-key`) 自动触发 `.key-active` 高亮，且目标字符序列显示开口方块符号 `␣` (`target-char-space`)。
 
@@ -80,10 +82,10 @@ TriType Arena 内置 1,100 笔精选题库，划分为三种难度等级：
 
 TriType Arena 内置完整的本地离线学习分析模块：
 
-- **挑战历程留存**：每场完成的挑战赛自动保存于 `localStorage` 之 `tritype.learning.v1`（最多保存 200 场，采用 FIFO 轮替淘汰）。
-- **弱键判定标准**：按模式将按键数据累积于 `tritype.weakkeys.v1.${mode}`。凡尝试次数 $\ge 10$ 次且错误率 $\ge 20\%$ 的按键，即标记为确认弱键。
-- **弱键专项复习 (Review Mode)**：依据当前弱键列表动态合成 10 题专项练习。
-- **最高分隔离保护**：复习模式标记为 `sessionType: 'review'`，练习成绩绝不覆写常规挑战赛的本地最高得分 (`tritype.best.v2`)。
+- **历程留存**：完成的挑战与复习都会写入 `localStorage` 的 `tritype.learning.v1`（最多 200 条，FIFO）。趋势图与面板平均值使用其中最近 20 条。
+- **弱键判定**：按键按模式累积于 `tritype.weakkeys.v1.${mode}`。尝试次数 $\ge 10$ 且错误率 $\ge 20\%$ 才标成确认弱键。
+- **弱键复习**：按当前模式与难度，从确认弱键组成最多 10 题。没有确认弱键，或没有对应题目时，复习不会开始。
+- **最高分隔离**：复习场次标记为 `sessionType: 'review'`。只有 `sessionType: 'challenge'` 会更新最高分 (`tritype.best.v2`)。复习成绩仍会写入学习历程。
 
 ---
 
@@ -102,18 +104,27 @@ cd tri-type-arena-public
 # 安装纯净依赖
 npm ci
 
-# 启动 Vite 本地开发服务器（依据 vite.config.ts 配置于端口 4174）
+# 启动 Vite 开发服务器。
+# vite.config.ts 把 server.port 设为 4174，server.host 设为 true（监听所有接口）。
+# 未设置 strictPort，4174 被占用时会改用下一个可用端口。
 npm run dev
-# 浏览器访问 http://localhost:4174
+# 打开 Vite 打印的网址。4174 可用时为 http://localhost:4174/
 ```
 
 ### 生产构建与预览
 ```bash
-# 执行 TypeScript 类型检查并编译至 dist/
+# 先用 tsc 做类型检查，再把生产包写入 dist/
 npm run build
 
-# 本地预览生产构建产物
+# 用 Vite preview 提供 dist/。
+# 未设置 preview.port，因此使用 Vite 6 的默认端口 4173。
+# 未设置 preview.host，因此沿用 server.host（所有接口）。
 npm run preview
+# 打开 Vite 打印的网址。4173 可用时为 http://localhost:4173/
+
+# 先做来源验证与题库发行闸门，再执行同一个生产构建。
+# vercel.json 把这条命令设为 Vercel 构建命令。
+npm run build:release
 ```
 
 ---
@@ -123,63 +134,83 @@ npm run preview
 执行以下自动化检查：
 
 ```bash
-# 执行完整质量门禁 (类型检查、ESLint、Node 与 Vitest 测试、开源许可审计、安全扫描、生产构建)
+# 本地质量门禁，顺序为：typecheck、lint、npm test、test:vitest、
+# validate:provenance、audit:licenses、audit:security、npm run build。
+# 不执行 Playwright，也不执行 build:release。
 npm run check
 ```
 
 ### 个别测试命令
-- **Node.js 原生单元与合规测试**：`npm test`
-- **Vitest 组件与领域集成测试**：`npm run test:vitest`
-- **Playwright 端到端浏览器测试**：
-  - Chromium：`npm run test:e2e`
-  - WebKit (Safari)：`npm run test:e2e:webkit`
-  - 跨浏览器完整测试：`npm run test:e2e:all`
-- **静态代码检查**：
-  - TypeScript 类型检查：`npm run typecheck`
-  - ESLint 静态分析：`npm run lint`
-- **安全与开源许可审计**：
-  - 开源许可合规检查：`npm run audit:licenses`（依项目规则检查依赖包许可）
-  - 安全审计：`npm run audit:security` 执行 npm audit，并在已安装时使用 Gitleaks；本地未安装时会警告并跳过，CI 则要求安装。
-  - 题库数据完整性检查：`npm run validate:provenance`
+- **Node.js 单元与合规测试**：`npm test` 执行 `node --test tests/*.test.mjs`（此目录树为 66 项测试）。
+- **Vitest 组件与领域测试**：`npm run test:vitest`（`tests/domain` 与 `tests/components` 共 318 项测试）。
+- **Playwright**（`tests/e2e`，每个浏览器项目 20 项测试）。配置只有 Chromium 与 WebKit，没有 Firefox 项目。
+  - 先安装浏览器：`npx playwright install chromium` 或 `npx playwright install webkit`。在 Linux 上，WebKit 还需要 `npx playwright install-deps webkit` 安装的系统库（此步骤需要安装权限）。`npx playwright install --with-deps <browser>` 会一次做完。CI 以 `--with-deps` 安装 Chromium。
+  - 每条命令都会自行启动 `npm run dev`，且端口 4174 必须空闲（`reuseExistingServer: false`）。`baseURL` 为 `http://localhost:4174`。
+  - Chromium（20 项）：`npm run test:e2e`
+  - WebKit（20 项）：`npm run test:e2e:webkit`
+  - 两个项目（40 项）：`npm run test:e2e:all`
+- **静态检查**：
+  - TypeScript：`npm run typecheck`（`tsc --noEmit`）
+  - ESLint：`npm run lint`（`eslint src`）
+- **安全与许可**：
+  - 许可审计：`npm run audit:licenses` 按项目允许清单检查 lockfile 许可，并再跑一次 `tests/license-audit.test.mjs`。
+  - 安全审计：`npm run audit:security` 扫描 git 历史与已跟踪文件中的密钥，执行 `npm audit --omit=dev`（只查生产依赖），并在已安装时执行 Gitleaks。本地缺少 Gitleaks 时会警告并继续；`CI=true` 时缺少该程序会使审计失败。
+  - 来源验证：`npm run validate:provenance` 按来源登记检查 1,100 条题库。
 
 ---
 
 ## 9. 系统架构与技术选型 (Architecture & Technology Stack)
 
 ```
-tri-type-arena/
+tri-type-arena-public/
+├── index.html                  # 浏览器入口 → src/app/main.tsx
 ├── src/
-│   ├── app/                    # 应用程序组装 (App.tsx, styles.css)
-│   ├── domain/                 # 纯领域逻辑 (100% 可单独测试，无 React/DOM 依赖)
-│   │   ├── vocabulary/         # 1,100 笔精选题库 (en, pinyin, zhuyin)
-│   │   ├── learning/           # 历程存储、弱键分析、复习生成器
-│   │   ├── shuffle-bag.ts      # 种子随机 Fisher-Yates 与边界防重复算法
-│   │   ├── typing-answer.ts    # 运行阶段拼音/注音答案与第一声 Space 推导
-│   │   └── session.ts          # 核心游戏状态机
-│   ├── features/               # 功能组件层
-│   │   ├── typing/             # 打字舞台、难度切换器、打字 Session Hook
-│   │   ├── keyboard/           # 大千虚拟键盘 (DaqianKeyboard)
-│   │   ├── learning/           # 学习进度面板与纯 SVG 趋势图 (TrendChart)
-│   │   ├── stats/              # 实时数据看板 (LiveStats)
-│   │   ├── results/            # 结算窗口 (ResultModal)
-│   │   └── onboarding/         # 新手导览弹窗 (Onboarding)
-│   ├── i18n/                   # 多语言字典与 Hook (core.ts, useLocale.ts)
-│   └── shared/                 # LocalStorage 存取与版本配置
-├── docs/                       # 系统架构规范与开源合规治理文件
-├── openspec/                   # 规范驱动开发 (SDD) 变更提案目录
-└── tests/                      # 自动化测试套件
+│   ├── app/                    # 应用程序外壳 (main.tsx, App.tsx, styles.css)
+│   ├── domain/                 # 打字规则与题库。弱键辅助也会读取 localStorage。
+│   │   ├── vocabulary/         # 1,100 条题库 (en, pinyin, zhuyin)
+│   │   ├── learning/           # 历程、弱键、复习生成器，以及自适应练习辅助
+│   │   │                       # （界面不会启动自适应练习）
+│   │   ├── shuffle-bag.ts      # Fisher-Yates，并避免循环边界重复
+│   │   ├── typing-answer.ts    # 拼音/注音答案与第一声 Space
+│   │   ├── session.ts          # 打字状态机
+│   │   ├── metrics.ts          # WPM、准确率与得分
+│   │   ├── zhuyin-map.ts       # 大千键位与输入规范化
+│   │   └── prng.ts             # 可选的种子随机数
+│   ├── features/
+│   │   ├── typing/             # TypingArena、难度选择、useTypingSession
+│   │   ├── lessons/            # 模式与 30/60/120 秒时限
+│   │   ├── keyboard/           # DaqianKeyboard
+│   │   ├── learning/           # LearningDashboard、TrendChart
+│   │   ├── stats/              # LiveStats
+│   │   ├── results/            # ResultModal
+│   │   └── onboarding/         # 新手导览
+│   ├── i18n/                   # 文案与 useLocale (core.ts, useLocale.ts)
+│   └── shared/                 # localStorage 与版本
+├── tests/
+│   ├── *.test.mjs              # Node 测试运行器 (`npm test`)
+│   ├── domain/                 # Vitest 领域测试
+│   ├── components/             # Vitest 组件测试
+│   └── e2e/                    # Playwright（Chromium 与 WebKit）
+├── scripts/                    # 来源、许可与安全审计
+├── docs/                       # 规范、架构与题库记录
+├── public/notices/             # 第三方声明
+├── openspec/                   # 规范驱动变更提案
+├── vite.config.ts              # 开发端口 4174；预览使用 Vite 默认 4173
+└── vercel.json                 # buildCommand: npm run build:release
 ```
+
+Node 测试还会加载 `src/engine.mjs`、`src/app.mjs` 与 `src/legacy-lessons.mjs`。这些文件不是浏览器入口。
 
 | 架构层级 | 技术选型 |
 |---|---|
-| **前端框架** | React 18.3 |
-| **开发语言** | TypeScript 5.6 (严格模式 Strict Mode) |
-| **构建工具** | Vite 6.4 (端口 4174) |
-| **单元测试** | Node.js Test Runner + Vitest 4.1 |
-| **组件测试** | React Testing Library + jsdom |
-| **E2E 测试** | Playwright (Chromium & WebKit) |
-| **代码规范** | ESLint 9 |
-| **静态部署** | Vercel Static Hosting |
+| **前端框架** | React 18.3.1 |
+| **开发语言** | TypeScript 5.9.3（严格模式）。`package.json` 允许 `^5.6.3`；lockfile 解析为 5.9.3 |
+| **构建工具** | Vite 6.4.5。开发服务器端口 4174；预览端口 4173 |
+| **单元测试** | Node.js 测试运行器 + Vitest 4.1.12 |
+| **组件测试** | React Testing Library + jsdom（经由 Vitest） |
+| **E2E 测试** | Playwright 1.64（只有 Chromium 与 WebKit 项目） |
+| **代码规范** | ESLint 9.39 |
+| **静态部署** | Vercel 静态托管。仓库中的构建命令：`npm run build:release` |
 
 ---
 
@@ -189,14 +220,15 @@ TriType Arena 贯彻严格的**纯前端本地优先隐私政策**：
 
 - **数据绝不主动外传**：所有按键记录、打字速度 (WPM)、错误率及练习历史仅在用户本地浏览器（`localStorage`）中运算与保存，前端程序绝不主动将任何练习数据上传至外部服务器。
 - **无账号系统**：无需注册、无需登录即可即开即练。
-- **本地存储键值清单**：
-  - `tritype.best.v2`：各模式最高分记录。
-  - `tritype.difficulty.v1`：当前选定的难度偏好。
-  - `tritype.learning.v1`：200 笔练习历程（采用 FIFO 轮替淘汰）。
-  - `tritype.weakkeys.v1.${mode}`：各模式累积的按键尝试次数与错误次数。
-  - `tritype.onboarding.v1.completed`：新手导览完成状态标志。
-  - `tritype.locale.v1`：界面语言设置。
-- **随时可手动清除**：用户可通过学习进度面板中的“清除学习记录”按钮或浏览器清除网站缓存，随时彻底清空本地数据。
+- **本地存储键值**：
+  - `tritype.best.v2`：各模式挑战最高分。
+  - `tritype.difficulty.v1`：难度偏好（默认 `beginner`）。
+  - `tritype.learning.v1`：最多 200 条挑战与复习（FIFO）。
+  - `tritype.weakkeys.v1.${mode}`：`en`、`pinyin`、`zhuyin` 各自的按键尝试与错误次数。
+  - `tritype.onboarding.v1.completed`：关闭导览后写入 `yes`。
+  - `tritype.ui.locale`：界面语言（`en`、`zh-TW` 或 `zh-CN`）。
+  - `tritype.adaptive.v1`：自适应练习记录。当前界面不会启动自适应练习。清除记录仍会移除此键。
+- **清除记录**：面板按钮文字是“清除学习记录”。确认后会移除学习历程、自适应练习记录与弱键统计，不会清除最高分、难度、界面语言或导览完成标志。在浏览器中清除此网站数据才会一并移除那些项目。
 - **托管主机必要访问日志**：网站托管于 Vercel CDN 平台，服务器在分发静态资源时依互联网标准协议仍可能记录基础连接日志（如 IP 地址、连接时间、User-Agent 等），此为网络基础设施正常运转与防御网络攻击的技术常态。
 
 ---
@@ -208,7 +240,7 @@ TriType Arena 贯彻严格的**纯前端本地优先隐私政策**：
 1. **应用程序源码许可**：
    - 应用程序前端源码采用宽松友善的 [MIT License](LICENSE) 开源许可条款发布。
 2. **第三方依赖包审计**：
-   - 使用 `npm run audit:licenses` 检查依赖包许可，并以 `npm run audit:security` 执行 npm audit，并在已安装时使用 Gitleaks；本地缺少 Gitleaks 时会警告并跳过，CI 则要求安装。最近一次完整 npm audit 在开发工具链报告 10 项中度问题；生产环境依赖包没有发现。审计结果会随时间变化，且需要连接 registry。
+   - 使用 `npm run audit:licenses` 检查依赖包许可，并以 `npm run audit:security` 扫描密钥、执行 `npm audit --omit=dev`，以及在已安装时执行 Gitleaks。本地缺少 Gitleaks 时会警告并继续；`CI=true` 时缺少该程序会使审计失败。对照此 lockfile，完整 `npm audit` 报告 6 项中度问题，全部在开发工具链（`minimatch`，经由 `@typescript-eslint` / ESLint）。`npm audit --omit=dev` 的生产依赖没有发现。数字会随 lockfile 或 advisory 数据库改变，而且两条命令都需要连接 registry。
 3. **词库来源与许可**：
    - 中文词库采用 CC-CEDICT 数据，按 CC BY-SA 4.0 声明；英文词库来自作者声明为公有领域的 Moby Words II。详见[第三方声明](public/notices/index.html)及[来源记录](docs/vocabulary/)。
    - 所有者同意依已记录的许可发布现有数据。来源记录不是法律保证；中文读音尚未完成全面人工审查，注音由拼音机械转写，未确认符合台湾惯用读音。
@@ -218,7 +250,7 @@ TriType Arena 贯彻严格的**纯前端本地优先隐私政策**：
 
 ## 12. 部署状态与已知限制 (Deployment & Known Limitations)
 
-- **部署**：正式站点为 [https://tri-type-arena.vercel.app/](https://tri-type-arena.vercel.app/)，由 Vercel 从本仓库部署。
+- **部署**：正式站点为 [https://tri-type-arena.vercel.app/](https://tri-type-arena.vercel.app/)。本仓库的 `vercel.json` 把 Vercel 构建命令设为 `npm run build:release`（来源验证、题库发行闸门，然后 `npm run build`）。Vercel 项目后台的设置可以覆盖这个文件。`npm run check` 的最后一步仍是 `npm run build`，不是 `build:release`。
 - **已知限制**：
   - **单机本地存储 · 无云端同步**：练习记录均保存在当前浏览器的 `localStorage` 中，无法跨设备或跨不同浏览器自动同步进度。
   - **键位练习 vs. 操作系统 IME 选字**：注音模式专注于训练实体按键对应大千注音符号的盲打肌肉记忆，模拟直接输入拼音/注音字符，刻意不模拟操作系统层级的中文选字候选清单。
